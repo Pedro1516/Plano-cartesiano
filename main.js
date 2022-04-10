@@ -12,6 +12,7 @@ var pontoA = []
 var pontoB = []
 
 document.onload = desenharMalha()
+document.onload = escreverNum()
 
 function desenharMalha() {
   //Linhas verticais
@@ -72,11 +73,21 @@ function conversorOrigem(ponto) {
     ponto[1] = (canvas.height / 2) - (ponto[1] * 10)
   } //Ponto y positivo
 
+
+  if(ponto[0] == 0){
+      ponto[0] = canvas.width / 2
+  }
+
+  if(ponto[1] == 0){
+    ponto[1] = canvas.height / 2
+  }
+
 }
 
 function desenharPonto(){
   //Ponto A
   conversorOrigem(pontoA)
+  ctx.fillStyle = 'black'
   ctx.arc(pontoA[0], pontoA[1], 5, 0, 360, false)
   ctx.fill()
   ctx.closePath()
@@ -100,8 +111,9 @@ function escreverCoordenadas(ponto){
 
   const posX = (ponto[0] - canvas.width/2) / 10
   const posY = (ponto[1] - canvas.height/2) / 10
-  
+
   const texto = `(${posX}, ${-posY})`
+  ctx.fillStyle = 'black'
   ctx.translate(3, -3)
   ctx.fillText(texto, ponto[0], ponto[1])
 }
@@ -110,43 +122,52 @@ function limparTela(){
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
+function escreverNum(){
+  const tamanhoCanvas = (canvas.width / 2) //Como o canvas é quadrado a sua altura e largura são iguais
+  const coordenadas = tamanhoCanvas / 10
+  ctx.font = '7px arial'
+
+  //eixo x negativo
+  let cteste = tamanhoCanvas
+  for(i = 1; i < coordenadas ; i++){
+    cteste -= 10
+    ctx.fillStyle = 'red'
+   ctx.fillText(`-${i}`, cteste, canvas.height / 2 + 10)
+  }
+
+  //eixo x positivo
+  cteste = tamanhoCanvas
+  for(i = 1; i < coordenadas ; i++){
+    cteste += 10
+   ctx.fillText(i, cteste, canvas.height / 2 + 10)
+  }
+
+  //eixo y negativo
+  cteste = tamanhoCanvas
+  for(i = 1; i < coordenadas ; i++){
+    cteste += 10
+   ctx.fillText(i, canvas.width / 2 + 3, cteste + 10)
+  }
+
+  //eixo y positivo
+  cteste = tamanhoCanvas
+  for(i = 1; i < coordenadas ; i++){
+    cteste -= 10
+   ctx.fillText(i, canvas.width / 2 + 3, cteste)
+  }
+}
+
 botao.addEventListener('click', () => {
   pontoA = [xA.value, yA.value]
   pontoB = [xB.value, yB.value]
-  
+
   ctx.save()
   limparTela()
   desenharMalha()
   desenharPonto()
   desenharReta()
-  
+  escreverNum()
   escreverCoordenadas(pontoA)
   escreverCoordenadas(pontoB)
   ctx.restore()
 })
-
-
-
-function escreverNum(){
-  let posicao = []
-  for(i = 10 ; i < canvas.width/2; i += 10){
-    posicao.push(i)
-  }
-  
-  posicao.reverse()
-  //Posição x negativo
-  for(c=0; c < canvas.width/10; c++){
-    ctx.font = '7px Arial'
-    console.log(posicao[c])
-    ctx.fillText(-c-1 , posicao[c], canvas.height/2 + 10)
-  }
-  //Posicao x positivo
-  for(i= canvas.width/2 + 10; i < canvas.width; i+= 10){
-    ctx.font = '7px Arial'
-    ctx.fillText(i, i, canvas.height/2 + 10)
-  }
-  
-  console.log(posicao)
-  
-}
-escreverNum()
